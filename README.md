@@ -92,12 +92,6 @@ python tools/video_editor.py
 
 ## Development
 
-### Code Style
-- Follow PEP 8 guidelines
-- Use type hints where appropriate
-- Keep functions focused and single-purpose
-- Minimal comments - code should be self-documenting
-
 ### Project Conventions
 - Components in `webui/components/` are single-responsibility
 - State management centralized in `webui/state.py`
