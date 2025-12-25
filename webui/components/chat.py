@@ -1,19 +1,14 @@
+"""Chat interface components."""
+
 import reflex as rx
 
 from webui import styles
-from webui.components import loading_icon
+from webui.components.loading import loading_icon
 from webui.state import QA, State
 
 
 def message(qa: QA) -> rx.Component:
-    """A single question/answer message.
-
-    Args:
-        qa: The question/answer pair.
-
-    Returns:
-        A component displaying the question/answer pair.
-    """
+    """Render a single question/answer message pair."""
     return rx.chakra.box(
         rx.chakra.box(
             rx.chakra.text(
@@ -40,7 +35,7 @@ def message(qa: QA) -> rx.Component:
 
 
 def chat() -> rx.Component:
-    """List all the messages in a single conversation."""
+    """Render the chat message list."""
     return rx.chakra.vstack(
         rx.heading("LLM powered Editor", align="center", weight="medium"),
         rx.chakra.box(rx.foreach(State.chats[State.current_chat], message)),
@@ -56,7 +51,7 @@ def chat() -> rx.Component:
 
 
 def action_bar() -> rx.Component:
-    """The action bar to send a new message."""
+    """Render the message input action bar."""
     return rx.chakra.box(
         rx.chakra.vstack(
             rx.chakra.form(
@@ -66,7 +61,7 @@ def action_bar() -> rx.Component:
                             placeholder="Type something...",
                             id="question",
                             _placeholder={"color": "#fffa"},
-                            _hover={"border_color": '#fffa'},
+                            _hover={"border_color": "#fffa"},
                             style=styles.textbox_style,
                         ),
                         rx.chakra.button(
@@ -76,7 +71,7 @@ def action_bar() -> rx.Component:
                                 rx.chakra.text("Process"),
                             ),
                             type_="submit",
-                            _hover={"bg": '#5F1A37'},
+                            _hover={"bg": "#5F1A37"},
                             style=styles.input_style,
                         ),
                     ),
@@ -98,5 +93,5 @@ def action_bar() -> rx.Component:
         backdrop_blur="lg",
         align_items="stretch",
         width="100%",
-        bg='rgba(255,255,255, 0.1)',
+        bg="rgba(255,255,255, 0.1)",
     )
