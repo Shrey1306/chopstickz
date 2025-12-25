@@ -1,4 +1,4 @@
-# Chopstickz: AI-Powered Video Editing Platform
+# Chopsticks: AI-Powered Video Editing Platform
 
 An AI-powered video editing platform designed to simplify content creation for streamers and content creators.
 
