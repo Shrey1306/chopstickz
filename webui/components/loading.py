@@ -1,8 +1,10 @@
+"""Loading indicator component."""
+
 import reflex as rx
 
 
 class LoadingIcon(rx.Component):
-    """A custom loading icon component."""
+    """Custom loading icon component using react-loading-icons."""
 
     library = "react-loading-icons"
     tag = "SpinningCircles"
@@ -19,3 +21,4 @@ class LoadingIcon(rx.Component):
 
 
 loading_icon = LoadingIcon.create
+

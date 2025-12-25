@@ -1,41 +1,108 @@
-# Chopsticks: AI-Powered Editing Software
+# Chopstickz: AI-Powered Video Editing Platform
 
-## [Check us out](https://chopsticks.streamlit.app/)
+An AI-powered video editing platform designed to simplify content creation for streamers and content creators.
 
-## Inspiration
+## Project Structure
 
-In today's digital era, content creation is at an all-time high, yet the tools available are not always user-friendly, especially for non-experts. After conducting extensive market research with numerous Twitch and YouTube creators, we identified a niche issue: the significant challenge content creators face when editing lengthy videos. The existing editing tools are often complex and not intuitive, leading creators to spend excessive time learning or outsourcing, which can be costly. Addressing these challenges, we introduce Chopsticks, an AI-powered editing software designed to streamline the editing process, improve user experience, and increase creator profits.
+```
+chopstickz/
+├── webui/                          # Main Reflex web application
+│   ├── __init__.py
+│   ├── webui.py                    # Application entry point
+│   ├── state.py                    # Application state management
+│   ├── styles.py                   # Styling constants
+│   └── components/                 # UI components
+│       ├── __init__.py
+│       ├── chat.py                 # Chat interface
+│       ├── loading.py              # Loading indicator
+│       ├── modal.py                # Modal dialogs
+│       ├── navbar.py               # Navigation bar
+│       ├── sidebar.py              # Sidebar drawer
+│       └── video.py                # Video display and upload
+├── tools/                          # Standalone tools
+│   ├── __init__.py
+│   └── video_editor.py             # PyQt5 video editor with LLM guidance
+├── demo/                           # Demo applications
+│   ├── __init__.py
+│   └── showcase.py                 # Streamlit showcase app
+├── assets/                         # Static assets
+│   ├── custom_video_controls.js    # Video player controls
+│   ├── favicon.ico
+│   └── *.png, *.mp4                # Media files
+├── rxconfig.py                     # Reflex configuration
+├── requirements.txt                # Python dependencies
+└── README.md
+```
 
-## What It Does
+## Features
 
-Chopsticks revolutionizes video editing with its dual-use system. Our platform leverages deep learning to provide a chat-powered interface for text queries and video manipulation, alongside an analytics component that identifies the most entertaining and important parts of a video. This innovative approach allows creators to efficiently produce short-form content from longer videos, significantly enhancing content quality and viewer engagement.
+- **LLM-Powered Chat Interface**: Natural language commands for video editing
+- **Video Upload and Display**: Upload streams and view them with custom controls
+- **Multi-API Support**: OpenAI and Baidu API integration
+- **Engagement Analysis**: Analyzes viewer engagement using:
+  - Voice transcription (Whisper)
+  - Chat sentiment analysis (RoBERTa)
+  - Facial expression recognition (DeepFace)
+  - Key moment identification (T5)
 
-## How We Built It
+## Installation
 
-Our system employs a combination of advanced technologies:
-- Voice transcription with Whisper.
-- Chat log analysis through OCR/Web Scraping.
-- Creator expressions captured using OpenCV.
-- Viewer engagement and sentiment analysis using a fine-tuned Roberta model.
-- Key moments identification via a fine-tuned T5 text-text analysis model.
-- DeepFace model for reading streamer's reactions.
-- Our proprietary LLM-based video clipping tool for generating short-form content.
-- Reflex for crafting a user-friendly editing interface.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Shrey1306/chopstickz.git
+   cd chopstickz
+   ```
 
-These components work together to transform lengthy videos into engaging clips by analyzing engagement metrics and streamer reactions.
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-## Challenges We Ran Into
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Identifying what constitutes "entertaining" content was a major challenge due to the subjective nature of human emotions. Additionally, the initial processing time for videos was impractical, prompting us to optimize our algorithms and employ better hardware to significantly reduce the time required for content analysis.
+4. Set up environment variables:
+   ```bash
+   export OPENAI_API_KEY="your-api-key"
+   # Or for Baidu:
+   export BAIDU_API_KEY="your-api-key"
+   export BAIDU_SECRET_KEY="your-secret-key"
+   ```
 
-## Accomplishments We're Proud Of
+## Running the Application
 
-- Developing a unique solution that addresses real-world problems faced by content creators.
-- Learning and integrating new technologies to bring our idea to life.
-- Generating high-quality short-form content that validated our concept and technical approach.
+### Main Web Application (Reflex)
+```bash
+reflex run
+```
+The app will be available at `http://localhost:3000`
 
-## What's Next for Chopsticks
+### Demo Showcase (Streamlit)
+```bash
+streamlit run demo/showcase.py
+```
 
-We aim to launch Chopsticks as an open-source platform to build community trust and engagement, followed by a transition to a subscription-based model to sustain and scale our operations. Our vision extends beyond commercial success; we aspire to contribute positively to the community, particularly in educational contexts by making learning content more accessible and engaging.
+### Video Editor Tool (PyQt5)
+```bash
+python tools/video_editor.py
+```
 
+## Development
 
+### Code Style
+- Follow PEP 8 guidelines
+- Use type hints where appropriate
+- Keep functions focused and single-purpose
+- Minimal comments - code should be self-documenting
+
+### Project Conventions
+- Components in `webui/components/` are single-responsibility
+- State management centralized in `webui/state.py`
+- Styles defined in `webui/styles.py`
+
+## License
+
+MIT License

@@ -1,24 +1,21 @@
-import os
-import requests
+"""Application state management for the Chopstickz web interface."""
+
 import json
+import os
+
 import openai
 import reflex as rx
+import requests
 
-openai.api_key = ''
+openai.api_key = os.getenv("OPENAI_API_KEY", "")
 openai.api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
 
 BAIDU_API_KEY = os.getenv("BAIDU_API_KEY")
 BAIDU_SECRET_KEY = os.getenv("BAIDU_SECRET_KEY")
 
 
-if not openai.api_key and not BAIDU_API_KEY:
-    raise Exception("Please set OPENAI_API_KEY or BAIDU_API_KEY")
-
-
-def get_access_token():
-    """
-    :return: access_token
-    """
+def get_baidu_access_token() -> str:
+    """Get Baidu API access token."""
     url = "https://aip.baidubce.com/oauth/2.0/token"
     params = {
         "grant_type": "client_credentials",
@@ -36,65 +33,39 @@ class QA(rx.Base):
 
 
 DEFAULT_CHATS = {
-    "Edit 1": [QA(question='Upload an Image and Type to Edit. 🔥', answer='Go on!')],
+    "Edit 1": [QA(question="Upload an Image and Type to Edit.", answer="Go on!")],
 }
 
 
 class State(rx.State):
-    """The app state."""
+    """The application state."""
 
-    # A dict from the chat name to the list of questions and answers.
     chats: dict[str, list[QA]] = DEFAULT_CHATS
-
-    # The current chat name.
-    current_chat = "Edit 1"
-
-    # The current question.
+    current_chat: str = "Edit 1"
     question: str
-
-    # Whether we are processing the question.
     processing: bool = False
-
-    # The name of the new chat.
     new_chat_name: str = ""
-
-    # Whether the drawer is open.
     drawer_open: bool = False
-
-    # Whether the modal is open.
     modal_open: bool = False
-
     api_type: str = "baidu" if BAIDU_API_KEY else "openai"
-
-
     video_segments: list[str] = []
 
     async def handle_upload(self, files: list[rx.UploadFile]):
-        """Handle the upload of file(s) and process video.
-
-        Args:
-            files: The uploaded files.
-        """
+        """Handle video file upload."""
         for file in files:
             upload_data = await file.read()
-            # Define the outfile path directly in the current directory with the uploaded file's name
             assets_dir = os.path.join(os.getcwd(), "assets")
-            outfile = os.path.join(assets_dir, file.filename)  # os.getcwd() gets the current working directory
+            outfile = os.path.join(assets_dir, file.filename)
 
-            # Save the file to the outfile path
             with open(outfile, "wb") as file_object:
                 file_object.write(upload_data)
 
-            # Update the state with the path to the saved file
-            self.video_segments.append(file.filename)  # Appending the path of the saved file to video_paths
+            self.video_segments.append(file.filename)
 
     def create_chat(self):
-        """Create a new chat."""
-        # Add the new chat to the list of chats.
+        """Create a new chat session."""
         self.current_chat = self.new_chat_name
         self.chats[self.new_chat_name] = []
-
-        # Toggle the modal.
         self.modal_open = False
 
     def toggle_modal(self):
@@ -102,11 +73,11 @@ class State(rx.State):
         self.modal_open = not self.modal_open
 
     def toggle_drawer(self):
-        """Toggle the drawer."""
+        """Toggle the sidebar drawer."""
         self.drawer_open = not self.drawer_open
 
     def delete_chat(self):
-        """Delete the current chat."""
+        """Delete the current chat session."""
         del self.chats[self.current_chat]
         if len(self.chats) == 0:
             self.chats = DEFAULT_CHATS
@@ -114,29 +85,18 @@ class State(rx.State):
         self.toggle_drawer()
 
     def set_chat(self, chat_name: str):
-        """Set the name of the current chat.
-
-        Args:
-            chat_name: The name of the chat.
-        """
+        """Set the active chat session."""
         self.current_chat = chat_name
         self.toggle_drawer()
 
     @rx.var
     def chat_titles(self) -> list[str]:
-        """Get the list of chat titles.
-
-        Returns:
-            The list of chat names.
-        """
+        """Get the list of chat titles."""
         return list(self.chats.keys())
 
-    #The processing function
     async def process_question(self, form_data: dict[str, str]):
-        # Get the question from the form
+        """Process a user question through the appropriate API."""
         question = form_data["question"]
-
-        # Check if the question is empty
         if question == "":
             return
 
@@ -149,39 +109,30 @@ class State(rx.State):
             yield value
 
     async def openai_process_question(self, question: str):
-        """Get the response from the API.
-
-        Args:
-            form_data: A dict with the current question.
-        """
-
-        # Add the question to the list of questions.
+        """Process question using OpenAI API."""
         qa = QA(question=question, answer="")
         self.chats[self.current_chat].append(qa)
-
-        # Clear the input and start the processing.
         self.processing = True
         yield
 
-        # Build the messages.
         messages = [
-            {"role": "system", "content": "You are a friendly chatbot named prod.ai, a language powered video editing tool to simplify content creation."}
+            {
+                "role": "system",
+                "content": "You are a friendly chatbot named prod.ai, a language powered video editing tool to simplify content creation.",
+            }
         ]
         for qa in self.chats[self.current_chat]:
             messages.append({"role": "user", "content": qa.question})
             messages.append({"role": "assistant", "content": qa.answer})
 
-        # Remove the last mock answer.
         messages = messages[:-1]
 
-        # Start a new session to answer the question.
         session = openai.ChatCompletion.create(
             model=os.getenv("OPENAI_MODEL", "gpt-4"),
             messages=messages,
             stream=True,
         )
 
-        # Stream the results, yielding after every word.
         for item in session:
             if hasattr(item.choices[0].delta, "content"):
                 answer_text = item.choices[0].delta.content
@@ -189,38 +140,28 @@ class State(rx.State):
                 self.chats = self.chats
                 yield
 
-        # Toggle the processing flag.
         self.processing = False
 
     async def baidu_process_question(self, question: str):
-        """Get the response from the API.
-
-        Args:
-            form_data: A dict with the current question.
-        """
-        # Add the question to the list of questions.
+        """Process question using Baidu API."""
         qa = QA(question=question, answer="")
         self.chats[self.current_chat].append(qa)
-
-        # Clear the input and start the processing.
         self.processing = True
         yield
 
-        # Build the messages.
         messages = []
         for qa in self.chats[self.current_chat]:
             messages.append({"role": "user", "content": qa.question})
             messages.append({"role": "assistant", "content": qa.answer})
 
-        # Remove the last mock answer.
-        messages = json.dumps({"messages": messages[:-1]})
-        # Start a new session to answer the question.
+        messages_json = json.dumps({"messages": messages[:-1]})
+
         session = requests.request(
             "POST",
             "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro?access_token="
-            + get_access_token(),
+            + get_baidu_access_token(),
             headers={"Content-Type": "application/json"},
-            data=messages,
+            data=messages_json,
         )
 
         json_data = json.loads(session.text)
@@ -229,5 +170,5 @@ class State(rx.State):
             self.chats[self.current_chat][-1].answer += answer_text
             self.chats = self.chats
             yield
-        # Toggle the processing flag.
+
         self.processing = False

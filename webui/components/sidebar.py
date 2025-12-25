@@ -1,3 +1,5 @@
+"""Sidebar drawer component for chat navigation."""
+
 import reflex as rx
 
 from webui import styles
@@ -5,11 +7,7 @@ from webui.state import State
 
 
 def sidebar_chat(chat: str) -> rx.Component:
-    """A sidebar chat item.
-
-    Args:
-        chat: The chat item.
-    """
+    """Render a single sidebar chat item."""
     return rx.chakra.hstack(
         rx.chakra.box(
             chat,
@@ -32,7 +30,7 @@ def sidebar_chat(chat: str) -> rx.Component:
 
 
 def sidebar() -> rx.Component:
-    """The sidebar component."""
+    """Render the sidebar drawer."""
     return rx.chakra.drawer(
         rx.chakra.drawer_overlay(
             rx.chakra.drawer_content(
@@ -48,7 +46,9 @@ def sidebar() -> rx.Component:
                 ),
                 rx.chakra.drawer_body(
                     rx.chakra.vstack(
-                        rx.foreach(State.chat_titles, lambda chat: sidebar_chat(chat)),
+                        rx.foreach(
+                            State.chat_titles, lambda chat: sidebar_chat(chat)
+                        ),
                         align_items="stretch",
                     )
                 ),

@@ -1,4 +1,4 @@
-"""The main Chat app."""
+"""Main Chopstickz web application."""
 
 import reflex as rx
 
@@ -6,30 +6,32 @@ from webui import styles
 from webui.components import chat, modal, navbar, sidebar, videodisplay
 from webui.state import State
 
-@rx.page(
-    title="prod.ai", 
-)
 
+@rx.page(title="prod.ai")
 def index() -> rx.Component:
-    """The main app."""
+    """Render the main application page."""
     return rx.chakra.vstack(
-        rx.script(src='/custom_video_controls.js'),
+        rx.script(src="/custom_video_controls.js"),
         navbar(),
         rx.chakra.hstack(
-            rx.scroll_area(  # Scrollable area for the videodisplay
-                rx.chakra.flex(  # Flex container for the videodisplay content
-                    videodisplay(),  # Assuming videodisplay() returns the content to display
+            rx.scroll_area(
+                rx.chakra.flex(
+                    videodisplay(),
                     direction="column",
                     spacing="4",
                 ),
                 type="always",
                 scrollbars="vertical",
-                style={"height": "calc(100vh - 20vh)", "width": "80%", "borderRightWidth": '1px', 'borderColor': 'white'},
-            
+                style={
+                    "height": "calc(100vh - 20vh)",
+                    "width": "80%",
+                    "borderRightWidth": "1px",
+                    "borderColor": "white",
+                },
             ),
-            rx.scroll_area(  # Scrollable area for the chat
-                rx.chakra.flex(  # Flex container for the chat content
-                    chat.chat(),  # Assuming chat.chat() returns the chat component
+            rx.scroll_area(
+                rx.chakra.flex(
+                    chat.chat(),
                     direction="column",
                     spacing="4",
                 ),
@@ -50,6 +52,6 @@ def index() -> rx.Component:
         spacing="0",
     )
 
-# Add state and page to the app.
+
 app = rx.App(style=styles.base_style)
 app.add_page(index)

@@ -1,4 +1,54 @@
-*.db
-*.py[cod]
-.web
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Reflex
+.web/
+.states/
+
+# Temporary files
+temp/
+*.tmp
+*.temp
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Uploaded assets (keep tracked assets, ignore user uploads)
+assets/*.mp4
+!assets/clip_3.mp4
+!assets/Countdown1.mp4

@@ -1,5 +1,7 @@
-from .loading_icon import loading_icon
-from .navbar import navbar
-from .modal import modal
-from .sidebar import sidebar
-from .videodisplay import videodisplay
+"""UI components for the Chopstickz web interface."""
+
+from webui.components.loading import loading_icon
+from webui.components.modal import modal
+from webui.components.navbar import navbar
+from webui.components.sidebar import sidebar
+from webui.components.video import videodisplay

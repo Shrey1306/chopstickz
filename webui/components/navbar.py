@@ -1,10 +1,12 @@
+"""Navigation bar component."""
+
 import reflex as rx
 
-from webui import styles
 from webui.state import State
 
 
-def navbar():
+def navbar() -> rx.Component:
+    """Render the top navigation bar."""
     return rx.chakra.box(
         rx.chakra.hstack(
             rx.chakra.hstack(
@@ -29,14 +31,16 @@ def navbar():
                         rx.chakra.heading("prod.ai", size="sm"),
                     ),
                     rx.chakra.breadcrumb_item(
-                        rx.chakra.text(State.current_chat, size="sm", font_weight="normal"),
+                        rx.chakra.text(
+                            State.current_chat, size="sm", font_weight="normal"
+                        ),
                     ),
                 ),
             ),
             rx.chakra.hstack(
                 rx.chakra.button(
                     "+ New Edit",
-                    bg='#9B6A6C',
+                    bg="#9B6A6C",
                     px="4",
                     py="2",
                     h="auto",
@@ -63,5 +67,5 @@ def navbar():
         position="sticky",
         top="0",
         z_index="100",
-        bg='rgba(255,255,255, 0.1)',
+        bg="rgba(255,255,255, 0.1)",
     )

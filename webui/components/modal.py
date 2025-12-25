@@ -1,8 +1,12 @@
+"""Modal dialog component for creating new chats."""
+
 import reflex as rx
+
 from webui.state import State
 
+
 def modal() -> rx.Component:
-    """A modal to create a new chat."""
+    """Render the new chat creation modal."""
     return rx.chakra.modal(
         rx.chakra.modal_overlay(
             rx.chakra.modal_content(
@@ -13,8 +17,8 @@ def modal() -> rx.Component:
                             tag="close",
                             font_size="sm",
                             on_click=State.toggle_modal,
-                            color="#fff8",  # Light text/icon color can remain for contrast
-                            _hover={"color": "#fff"},  # Same here for hover effect
+                            color="#fff8",
+                            _hover={"color": "#fff"},
                             cursor="pointer",
                         ),
                         align_items="center",
@@ -25,25 +29,25 @@ def modal() -> rx.Component:
                     rx.chakra.input(
                         placeholder="Type something...",
                         on_blur=State.set_new_chat_name,
-                        bg='#776885',  # Dark background color for input
-                        border_color="#5F1A37",  # Use the deep maroon for border
-                        _placeholder={"color": "#776885"},  # Placeholder text in lighter plum
+                        bg="#776885",
+                        border_color="#5F1A37",
+                        _placeholder={"color": "#776885"},
                     ),
                 ),
                 rx.chakra.modal_footer(
                     rx.chakra.button(
                         "Create",
-                        bg="#9B6A6C",  # Button background in deep maroon
+                        bg="#9B6A6C",
                         box_shadow="md",
                         px="4",
                         py="2",
                         h="auto",
-                        _hover={"bg": "#9B6A6C"},  # Hover in lighter plum
+                        _hover={"bg": "#9B6A6C"},
                         on_click=State.create_chat,
                     ),
                 ),
-                bg="#1D1C27",  # Modal background in almost black
-                color="#fff",  # Text color in white for contrast
+                bg="#1D1C27",
+                color="#fff",
             ),
         ),
         is_open=State.modal_open,
